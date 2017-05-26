@@ -8,9 +8,11 @@ import (
 	"./docker"
 	//"os/exec"
 	"strings"
+	"time"
 )
 
 var (
+	FREQUENCY     = 10
 	ContainerList []string
 )
 
@@ -33,11 +35,18 @@ func updateContainerList() {
 }
 
 func main() {
-	updateContainerList()
-	stats, err := docker.Stats("p-uedgpizr")
-	if err == nil {
-		log.Println(stats)
+	for {
+		start := time.Now()
+		nextRun := start.Add(time.Duration(FREQUENCY) * time.Second)
+		result := make(map[string]interface{})
+		updateContainerList()
+		stats, err := docker.Stats("p-uedgpizr")
+		if err == nil {
+			log.Println(stats)
+		}
+		tcpStats := docker.TCPStatus("p-uedgpizr")
+		log.Println(tcpStats)
+		log.Println(result)
+		time.Sleep(nextRun.Sub(time.Now()))
 	}
-	tcpStats := docker.TCPStatus("p-uedgpizr")
-	log.Println(tcpStats)
 }
