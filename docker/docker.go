@@ -115,7 +115,7 @@ func Stats(container string) (models.Statistic, error) {
 		// 	log.Println(index, value)
 		// }
 		stats := make(map[string]string)
-		stats["cpu"] = tmp[1]
+		stats["cpu"] = strings.Replace(tmp[1], "%", "", -1)
 		stats["memory_used"] = parseMemory(tmp[2] + tmp[3])
 		stats["memory_total"] = parseMemory(tmp[5] + tmp[6])
 		stats["net_in"] = parseNetB(tmp[8] + tmp[9])
