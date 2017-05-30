@@ -27,3 +27,19 @@ func SendData(timestamp int64, data string) {
 	}
 
 }
+
+func SendDockerData(timestamp int64, data string) {
+
+	url_host := "http://10.151.30.72:20099/api/dockerlog"
+	tmp := strconv.FormatInt(timestamp, 10)
+	resp, err := http.PostForm(url_host,
+		url.Values{"timestamp": {tmp}, "data": {data}})
+
+	if err != nil {
+		fmt.Println(err)
+		//return
+	} else {
+		fmt.Println(resp)
+	}
+
+}
