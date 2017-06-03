@@ -1,11 +1,11 @@
-package main
+package docker
 
 import (
 	//"bytes"
-	"./kvm/models"
+	"../kvm/models"
 	"log"
 	//"os"
-	"./docker"
+	//"./docker"
 	"encoding/json"
 	"strconv"
 	"strings"
@@ -24,7 +24,7 @@ type Container struct {
 }
 
 func (container Container) lookupStatus() (statistic models.Statistic, err error) {
-	statistic, err = docker.Stats(container.Name)
+	statistic, err = Stats(container.Name)
 	return
 }
 
@@ -34,7 +34,7 @@ func init() {
 }
 
 func updateContainerList() {
-	result := docker.Cmd("docker ps | awk '{print $NF}'")
+	result := Cmd("docker ps | awk '{print $NF}'")
 	tmp := strings.Split(result, "\n")
 	ContainerList = []string{}
 	for _, name := range tmp {
@@ -92,7 +92,7 @@ func statisticDiffPerTime(statsFirst, statsSecond models.Statistic) (result map[
 	return
 }
 
-func main() {
+func Run() {
 	for {
 		start := time.Now()
 		nextRun := start.Add(time.Duration(FREQUENCY) * time.Second)
@@ -114,7 +114,7 @@ func main() {
 			}
 			//singleResult := make(map[string]interface{})
 			singleResult := statisticDiffPerTime(oldStats, newStats)
-			singleResult["tcp"] = docker.TCPStatus(container.Name)
+			singleResult["tcp"] = TCPStatus(container.Name)
 			result[name] = singleResult
 		}
 		if len(result) > 0 {

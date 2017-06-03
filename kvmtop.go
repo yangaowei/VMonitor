@@ -1,6 +1,7 @@
 package main
 
 import (
+	"./docker"
 	"./kvm/cpu"
 	"./kvm/disk"
 	"./kvm/memory"
@@ -49,6 +50,7 @@ var (
 	//运行模式
 	DEBUG = false
 
+	TYPE            = "KVM"
 	virtualmachines map[string]models.VirtualMachine
 	ppid2vmname     map[string]string
 
@@ -169,12 +171,14 @@ func defineFlags() {
 	//debug
 	flag.BoolVar(&DEBUG, "debug", DEBUG, "debug (default: true)")
 
+	flag.StringVar(&TYPE, "type", TYPE, "default:KVM")
+
 	// define flags for each collector
-	static.DefineFlags()
-	cpu.DefineFlags()
-	memory.DefineFlags()
-	network.DefineFlags()
-	disk.DefineFlags()
+	// static.DefineFlags()
+	// cpu.DefineFlags()
+	// memory.DefineFlags()
+	// network.DefineFlags()
+	// disk.DefineFlags()
 
 	flag.Parse()
 }
@@ -282,11 +286,22 @@ func getMachinesInfo(runs int) string {
 }
 
 func main() {
+	defineFlags()
+	log.Println(TYPE)
 	if DEBUG {
-		debug_main()
+		// debug_main()
+		log.Println(DEBUG)
+	} else if TYPE == "docker" {
+		docker.Run()
 	} else {
 		fmt.Println("starting")
-		defineFlags()
+		//defineFlags()
+		// define flags for each collector
+		static.DefineFlags()
+		cpu.DefineFlags()
+		memory.DefineFlags()
+		network.DefineFlags()
+		disk.DefineFlags()
 		initialize()
 		for n := -1; RUNCOUNT == -1 || n < RUNCOUNT; n++ {
 			start := time.Now()
