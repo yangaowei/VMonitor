@@ -3,6 +3,7 @@ package docker
 import (
 	//"bytes"
 	"../kvm/models"
+	"../util"
 	"log"
 	//"os"
 	//"./docker"
@@ -107,7 +108,7 @@ func Run() {
 				continue
 			}
 			//tcpStats := docker.TCPStatus(container)
-			log.Println(newStats)
+			log.Println("newStats:", newStats)
 			if len(oldStats.Values) < 1 {
 				container.stat = newStats
 				continue
@@ -122,6 +123,7 @@ func Run() {
 			b, _ := json.Marshal(result)
 			//bmt.Println(string(b), "value")
 			log.Println(string(b))
+			util.SendDockerData(time.Now().Unix(), string(b))
 		}
 		time.Sleep(nextRun.Sub(time.Now()))
 	}
